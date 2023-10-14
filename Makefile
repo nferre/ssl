@@ -5,7 +5,8 @@ SRC = src/ssl.c \
       src/parse/parse.c \
       src/parse/parse_utils.c \
       src/alg/md5.c \
-      src/alg/hash_utils.c
+      src/alg/hash_utils.c \
+      src/alg/sha256.c
 
 OBJ = $(SRC:.c=.o)
 

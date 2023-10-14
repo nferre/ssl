@@ -45,6 +45,7 @@ void	parse_hash_type(int argc, char **argv);
 bool	is_valid_hash_type(char *str);
 void	get_file(char *file_name);
 input_t	*new_node(long file_size);
+void	compute_hash(void);
 
 extern input_t	*begin_g;
 extern info_t	info_g;
