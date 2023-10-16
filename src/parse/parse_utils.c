@@ -48,6 +48,13 @@ input_t	*new_node(long file_size)
 	if (new == NULL)
 		{ puts("could not allocate"); exit(1); }
 
+	new->total_length = file_size + 8 + (64 - ((file_size + 8) % 64));
+	new->data = malloc(new->total_length); // malloc for data (file_size) + padding (64 - (file_size + 8	 % 64)) + length (64 bits = 8 bytes)
+	new->digest = malloc(MD5_LENGTH);
+	new->data_length = (uint64_t)file_size;
+	printf("%ld\n", file_size);
+	printf("%ld\n", new->total_length);
+	new->next = NULL;
 	if (tmp == NULL)
 		begin_g = new;
 	else
@@ -57,11 +64,19 @@ input_t	*new_node(long file_size)
 		tmp->next = new;
 	}
 	
-	new->total_length = file_size + 4 + (64 - ((file_size + 4) % 64));
-	new->data = malloc(new->total_length); // malloc for data (file_size) + padding (512 - (file_size + 64 % 512)) + length (64 bits = 4 bytes)
-	new->digest = malloc(MD5_LENGTH);
-	new->data_length = (uint64_t)file_size;
-	new->next = NULL;
-
 	return new;
+}
+
+void	free_nodes()
+{
+	input_t *node = begin_g;
+
+
+	for (input_t *tmp; node != NULL; node = node->next)
+	{
+		free(node->data);
+		free(node->digest);
+		tmp = node;
+		free(tmp);
+	}
 }

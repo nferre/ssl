@@ -19,7 +19,7 @@ $(EXECUTABLE): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $@
 
 input: $(EXECUTABLE)
-	./$(EXECUTABLE) md5 -s -r "hey" "hello" < input.txt
+	./$(EXECUTABLE) md5 -s -r "hello"
 
 test: $(EXECUTABLE)
 	./$(EXECUTABLE) md5

@@ -22,19 +22,45 @@ uint32_t K[] = {0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee,
 0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1,
 0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391};
 
+void printBinaryData(void *ptr, size_t size) {
+    unsigned char *bytePtr = (unsigned char *)ptr;
+    for (size_t i = 0; i < size; i++) {
+        for (int j = 7; j >= 0; j--) {
+            printf("%d", (bytePtr[i] >> j) & 1);
+        }
+        printf(" ");
+    }
+    printf("\n");
+}
+
+
 uint32_t rotate_left(uint32_t x, uint32_t n)
 {
 	return (x << n) | (x >> (32 - n));
 }
 
+void to_bytes(uint32_t val, uint8_t *bytes)
+{
+    bytes[0] = (uint8_t) val;
+    bytes[1] = (uint8_t) (val >> 8);
+    bytes[2] = (uint8_t) (val >> 16);
+    bytes[3] = (uint8_t) (val >> 24);
+}
+
 void	md5(input_t *node)
 {
 	// padding
-	for (uint64_t i = 0; i < (64 - (node->data_length + 4 % 64)); i++)
+	for (uint64_t i = 0; i < (node->total_length - (node->data_length + 8 % 64)); i++)
 		*(uint8_t*)(node->data + node->data_length + i) = (i == 0) ? 128 : 0;
+	
+	// length
+	*(uint32_t *)(node->data + node->total_length - 8) = (uint32_t)(node->data_length * 8);
+	*(uint32_t *)(node->data + node->total_length - 4) = (uint32_t)((node->data_length * 8) >> 32);
 	
 	compute_md5(node);
 }
+
+
 
 void	compute_md5(input_t *node)
 {
@@ -43,10 +69,8 @@ void	compute_md5(input_t *node)
 	for (int block = 0; block < node->total_length; block += 64) // for each block (512 bits)
 	{
 		uint32_t input[16];
-		for (int i = 0; i < 14; i++)
+		for (int i = 0; i < 16; i++)
 			input[i] = *(uint32_t *)(node->data + block + i * 4);
-		input[14] = (uint32_t)(node->data_length * 8);			// append length
-		input[15] = (uint32_t)((node->data_length * 8) >> 32);
 
 		uint32_t AA = digest[0];
 		uint32_t BB = digest[1];
@@ -78,6 +102,7 @@ void	compute_md5(input_t *node)
 				j = (i * 7) % 16;
 			}
 
+
 			uint32_t temp = DD;
 			DD = CC;
 			CC = BB;
@@ -88,6 +113,7 @@ void	compute_md5(input_t *node)
 		digest[1] += BB;
 		digest[2] += CC;
 		digest[3] += DD;
+
 	}
 	for (int i = 0; i != 4; i++)
 		node->digest[i] = __builtin_bswap32(digest[i]); // convert from little endian;

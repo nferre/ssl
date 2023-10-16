@@ -2,21 +2,22 @@
 
 void	parse(int argc, char **argv) {
 	parse_arg(argc, argv);
-	parse_stdin();
+	//parse_stdin();
 }
 
 void	parse_stdin(void)
 {
-	char buffer[1024];
+	char *buffer = malloc(1024);
 	size_t bytes_read;
 	input_t *node;
 
-	// does not input from stdin too large
-	bytes_read = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
+	// does not work with input from stdin too large
+	bytes_read = fread(buffer, sizeof(char), sizeof(buffer), stdin);
 	buffer[bytes_read] = '\0';
 
 	node = new_node(bytes_read);
-	node->data = buffer;
+	memcpy(node->data, buffer, bytes_read);
+	free(buffer);
 }
 
 // check and parse args
