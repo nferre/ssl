@@ -8,6 +8,6 @@ int main(int argc, char **argv)
 {
 	parse(argc, argv);
 	compute_hash();
-	//print_nodes();
-	//free_nodes();
+	print_nodes();
+	free_nodes();
 }

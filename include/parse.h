@@ -8,12 +8,6 @@
 # include <stdio.h>
 # include <stdbool.h>
 # include <stdint.h>
-# include "math.h"
-
-# define FLAG_P 1
-# define FLAG_Q 2
-# define FLAG_R 4
-# define FLAG_S 8
 
 # define MD5 	1
 # define SHA256 2
@@ -23,11 +17,13 @@ typedef struct inp {
 	uint64_t	data_length;
 	long		total_length;
 	uint32_t	*digest;
+	char		*file_name;
 	struct inp	*next;
 } input_t;
 
 typedef struct mode {
 	int hash_type;
+	char *hash_name;
 	int flag;
 } info_t;
 
@@ -35,17 +31,14 @@ typedef struct mode {
 
 void	parse(int argc, char **argv);
 void	parse_stdin(void);
-void	parse_arg(int argc, char **argv);
-void	parse_flags(int argc, char **argv);
-void	parse_files(int argc, char **argv, int i);
+void	parse_files(int argc, char **argv);
 void	parse_hash_type(int argc, char **argv);
 
 // utils
 
 bool	is_valid_hash_type(char *str);
 void	get_file(char *file_name);
-input_t	*new_node(long file_size);
-void	compute_hash(void);
+input_t	*new_node(long file_size, char *file_name);
 
 extern input_t	*begin_g;
 extern info_t	info_g;

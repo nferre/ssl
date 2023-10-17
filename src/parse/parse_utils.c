@@ -1,16 +1,17 @@
 #include "ssl.h"
 
-// modify to have functions pointers of all alg
 bool	is_valid_hash_type(char *hash_type)
 {
 	if (strcmp("md5", hash_type) == 0)
 	{
 		info_g.hash_type = MD5;
+		info_g.hash_name = strdup("md5");
 		return true;
 	}
 	else if (strcmp("sha256", hash_type) == 0)
 	{
 		info_g.hash_type = SHA256;
+		info_g.hash_name = strdup("sha256");
 		return true;
 	}
 	
@@ -25,13 +26,12 @@ void	get_file(char *file_name)
 	if (f == NULL)
 		{ printf("Error while opening the file %s\n", file_name); exit(1); }
 
-
 	//get file size
 	fseek(f, 0, SEEK_END);
 	size_t file_size = ftell(f);
 	fseek(f, 0, SEEK_SET);
 	
-	node = new_node(file_size); // create new node
+	node = new_node(file_size, file_name); // create new node
 
 	// get file content
 	size_t bytes_read = fread(node->data, 1, file_size, f);
@@ -40,7 +40,7 @@ void	get_file(char *file_name)
 		{ printf("Error while reading the file %s\n", file_name); exit(1); }
 }
 
-input_t	*new_node(long file_size)
+input_t	*new_node(long file_size, char *file_name)
 {
 	input_t *tmp = begin_g;
 	input_t *new = malloc(sizeof(input_t));
@@ -50,10 +50,9 @@ input_t	*new_node(long file_size)
 
 	new->total_length = file_size + 8 + (64 - ((file_size + 8) % 64));
 	new->data = malloc(new->total_length); // malloc for data (file_size) + padding (64 - (file_size + 8	 % 64)) + length (64 bits = 8 bytes)
-	new->digest = malloc(MD5_LENGTH);
+	new->digest = malloc(info_g.hash_type == MD5 ? MD5_LENGTH : SHA256_LENGTH);
 	new->data_length = (uint64_t)file_size;
-	printf("%ld\n", file_size);
-	printf("%ld\n", new->total_length);
+	new->file_name = file_name;
 	new->next = NULL;
 	if (tmp == NULL)
 		begin_g = new;
@@ -63,20 +62,5 @@ input_t	*new_node(long file_size)
 			tmp = tmp->next;
 		tmp->next = new;
 	}
-	
 	return new;
-}
-
-void	free_nodes()
-{
-	input_t *node = begin_g;
-
-
-	for (input_t *tmp; node != NULL; node = node->next)
-	{
-		free(node->data);
-		free(node->digest);
-		tmp = node;
-		free(tmp);
-	}
 }

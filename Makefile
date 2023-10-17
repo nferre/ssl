@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -fsanitize=address
 
 SRC = src/ssl.c \
       src/parse/parse.c \
@@ -19,7 +19,7 @@ $(EXECUTABLE): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $@
 
 input: $(EXECUTABLE)
-	./$(EXECUTABLE) md5 -s -r "hello"
+	./$(EXECUTABLE) sha256 < input.txt
 
 test: $(EXECUTABLE)
 	./$(EXECUTABLE) md5

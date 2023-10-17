@@ -12,6 +12,11 @@
 # define H6 0x1f83d9ab
 # define H7 0x5be0cd19
 
+# define SHA256_LENGTH 256 / 8
+
+#define ROTR(x,n)   (((x) >> n) | ((x) << (32 - n)))
+
 void	sha256(input_t *node);
+void	compute_sha256(input_t *node);
 
 #endif
