@@ -9,19 +9,37 @@ void	parse(int argc, char **argv) {
 		parse_stdin();
 }
 
+#define BLOCK_SIZE 100
 void	parse_stdin(void)
 {
-	char *buffer = malloc(1024);
-	size_t bytes_read;
+	char 	buffer[BLOCK_SIZE];
+	char	*temp_data = malloc(BLOCK_SIZE);
+	size_t	bytes_read = 0;
 	input_t *node;
+	size_t	total_bytes = 0;
+	size_t	size_data = 100;
 
-	// does not work with input from stdin too large
-	bytes_read = fread(buffer, sizeof(char), sizeof(buffer), stdin);
-	buffer[bytes_read] = '\0';
 
-	node = new_node(bytes_read, "stdin");
-	memcpy(node->data, buffer, bytes_read);
-	free(buffer);
+	// read what we can
+	while ((bytes_read = fread(buffer, sizeof(char), BLOCK_SIZE, stdin)) > 0)
+	{
+		// do we need to realloc ?
+		if (total_bytes + bytes_read > size_data)
+		{
+			size_data += BLOCK_SIZE;
+			temp_data = (char *)realloc(temp_data, size_data);
+		}
+
+		// copy what we read to a tmp buffer
+		memcpy(temp_data + total_bytes, buffer, bytes_read);
+		total_bytes += bytes_read;
+	}
+
+	//new node and transfer data
+	node = new_node(total_bytes, "stdin");
+	memcpy(node->data, temp_data, total_bytes);
+
+	free(temp_data);
 }
 
 // is_valid_hash_type sets info_g.hash_type

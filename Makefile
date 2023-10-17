@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra -fsanitize=address
+CFLAGS = -Wall -Werror -Wextra
 
 SRC = src/ssl.c \
       src/parse/parse.c \
@@ -13,22 +13,10 @@ OBJ = $(SRC:.c=.o)
 EXECUTABLE = ssl
 
 all: $(EXECUTABLE)
-	./$(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $@
 
-input: $(EXECUTABLE)
-	./$(EXECUTABLE) sha256 < input.txt
-
-test: $(EXECUTABLE)
-	./$(EXECUTABLE) md5
-	./$(EXECUTABLE) md5 -s
-	./$(EXECUTABLE) sha256 -s -r < input.txt
-	./$(EXECUTABLE) sha256 < input.txt
-	./$(EXECUTABLE) md5 -s -r -t "hello" < input.txt
-
-# Compile each source file separately to generate object files
 %.o: %.c
 	$(CC) $(CFLAGS) -I./include -c $< -o $@
 
