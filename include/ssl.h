@@ -6,6 +6,7 @@
 # include "sha256.h"
 # include <stdint.h>
 
+// hash utils
 void	compute_hash(void);
 void	print_nodes(void);
 void	free_nodes(void);

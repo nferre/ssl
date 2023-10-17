@@ -49,11 +49,12 @@ input_t	*new_node(long file_size, char *file_name)
 		{ puts("could not allocate"); exit(1); }
 
 	new->total_length = file_size + 8 + (64 - ((file_size + 8) % 64));
-	new->data = malloc(new->total_length); // malloc for data (file_size) + padding (64 - (file_size + 8	 % 64)) + length (64 bits = 8 bytes)
+	new->data = malloc(new->total_length); // malloc for data (file_size) + padding (64 - (file_size + 8 % 64)) + length (64 bits = 8 bytes)
 	new->digest = malloc(info_g.hash_type == MD5 ? MD5_LENGTH : SHA256_LENGTH);
 	new->data_length = (uint64_t)file_size;
 	new->file_name = file_name;
 	new->next = NULL;
+	
 	if (tmp == NULL)
 		begin_g = new;
 	else

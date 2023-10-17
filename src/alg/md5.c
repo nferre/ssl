@@ -51,7 +51,7 @@ void	compute_md5(input_t *node)
 	{
 		uint32_t input[16];
 		
-		// 64 byte block to 16 32 bites block
+		// 64 byte block to 16x(32 bits block)
 		for (int i = 0; i < 16; i++)
 			input[i] = *(uint32_t *)(node->data + block + i * 4);
 

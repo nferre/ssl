@@ -48,7 +48,7 @@ void	parse_hash_type(int argc, char **argv)
 	if (argc == 1 || !is_valid_hash_type(argv[1]))
 	{
 		puts("invalid args");
-		exit(0); //change me to 1
+		exit(1);
 	}
 }
 

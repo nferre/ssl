@@ -17,23 +17,13 @@ uint32_t K1[] = { 0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 
 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2 };
 
-void printBinaryData(void *ptr, size_t size) {
-    unsigned char *bytePtr = (unsigned char *)ptr;
-    for (size_t i = 0; i < size; i++) {
-        for (int j = 7; j >= 0; j--) {
-            printf("%d", (bytePtr[i] >> j) & 1);
-        }
-        printf(" ");
-    }
-    printf("\n");
-}
-
 void	sha256(input_t *node)
 {
+	//padding
 	for (uint64_t i = 0; i < (node->total_length - (node->data_length + 8 % 64)); i++)
 		*(uint8_t*)(node->data + node->data_length + i) = (i == 0) ? 128 : 0;
 
-		// add length end of block
+	// add length end of block in big endian
 	*(uint32_t *)(node->data + node->total_length - 4) = __builtin_bswap32((uint32_t)(node->data_length * 8));
 	*(uint32_t *)(node->data + node->total_length - 8) = __builtin_bswap32((uint32_t)((node->data_length * 8) >> 32));
 
@@ -49,7 +39,7 @@ void	compute_sha256(input_t *node)
 		uint32_t input[64];
 		uint32_t s0, s1;
 
-		// 64 byte block to 16 32 bites block
+		// 64 byte block to 16x(32 bits blocks)
 		for (int i = 0; i < 16; i++)
 			input[i] = __builtin_bswap32(*(uint32_t *)(node->data + block + i * 4));
 
